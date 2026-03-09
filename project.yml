@@ -1,0 +1,59 @@
+name: MemeMill
+options:
+  bundleIdPrefix: com.mememill
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+targets:
+  MemeMill:
+    type: application
+    platform: macOS
+    sources:
+      - path: MemeMill
+    settings:
+      base:
+        INFOPLIST_FILE: MemeMill/App/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.mememill.app
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_APP_SANDBOX: false
+        GENERATE_INFOPLIST_FILE: false
+    scheme:
+      testTargets:
+        - MemeMillTests
+      gatherCoverageData: true
+
+  MemeMillTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: MemeMillTests
+    dependencies:
+      - target: MemeMill
+    settings:
+      base:
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MemeMill.app/Contents/MacOS/MemeMill"
+        GENERATE_INFOPLIST_FILE: true
+
+schemes:
+  MemeMill:
+    build:
+      targets:
+        MemeMill: all
+        MemeMillTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - MemeMillTests
+    archive:
+      config: Release
